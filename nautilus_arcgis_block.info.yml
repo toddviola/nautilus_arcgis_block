@@ -1,0 +1,7 @@
+name: 'Nautilus ArcGIS Block'
+type: module
+description: 'Establish a block plugin that implements the ArcGIS Javascript API for embedding maps.'
+package: Nautilus Live
+core_version_requirement: ^10
+dependencies:
+  - drupal:block
