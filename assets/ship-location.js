@@ -10,48 +10,32 @@ import * as reactiveUtils from "@arcgis/core/core/reactiveUtils.js";
 
         //console.log(settings);
 
-        const DEFAULT_ZOOM = 8;
-        // Recenter on ship approximatly every 30 seconds.
+        const DEFAULT_ZOOM = 8
+        const REFRESH_INTERVAL_MINUTES = 5
+        // Recenter on ship approximatly every 5 minutes.
         // * "Approximately" because the centerOnShip function awaits some Promises before actually
-        // recentering the map so it may be a bit longer than 30 seconds.
-        // const RECENTER_INTERVAL = 30 * 1000;  
-
-        // Recenter on ship approximately every 180 seconds. 
-        // This is a test to see if the requests to the service go down. 
-        const RECENTER_INTERVAL = 180 * 1000;  
+        // recentering the map so it may be a bit longer than 5 minutes.
+        const RECENTER_INTERVAL_MILLISECONDS = REFRESH_INTERVAL_MINUTES * 60 * 1000;  
 
         let recenterTimeout;
         let userHasInteracted;
-        let vehiclePositionsLayer;
         let showShipTrack = settings['showShipTrack'];
-
-        // Define a unique value renderer and symbols
-        const trackRenderer = {
-          type: "simple",
-          symbol: {
-            color: "#990000",  // dark red
-            type: "simple-line",
-            style: "solid"
-          },
-        }
-
+        
         const webmap = new WebMap({
-          portalItem: {
-            id: '8948a092c59e4749869acc693b68b3a7'
-          }
+            portalItem: {
+                id: '2d78b7a7b70847788ad9af95bf6e4ba0',
+            }
+        });
+
+        const vehiclePositionsLayer = new FeatureLayer({
+            portalItem: {
+                id: '871f7733569c437f9eeebf94d72cb6bc',
+            },
         });
 
         const view = new MapView({
-          container: 'ship-location-map',
-          map: webmap,
-        });
-
-        const shipTracks = new FeatureLayer({
-            portalItem: {  // autocasts as esri/portal/PortalItem
-              id: '6d4cf4d625e74c35b82fbed71166be50',
-            },
-            renderer: trackRenderer,
-            opacity: 0.75
+            container: 'ship-location-map-container',
+            map: webmap,
         });
 
         const fullscreen = new Fullscreen({
@@ -59,32 +43,28 @@ import * as reactiveUtils from "@arcgis/core/core/reactiveUtils.js";
         });
         view.ui.add(fullscreen, "top-right");
 
-        async function centerOnShip(webmap, view) {
-            vehiclePositionsLayer = webmap.layers.find(({id}) => /^vehicle_positions/.test(id));
-            const {extent} = await vehiclePositionsLayer.queryExtent();
+        async function centerOnShip() {
+            const query = vehiclePositionsLayer.createQuery();
+            query.where = "vehicle = 'Nautilus'";
+            const {extent} = await vehiclePositionsLayer.queryExtent(query);
             await view.goTo(extent);
             view.zoom = DEFAULT_ZOOM;
             if (userHasInteracted) {return;}
-            recenterTimeout = setTimeout(centerOnShip, RECENTER_INTERVAL, webmap, view);
+            recenterTimeout = setTimeout(centerOnShip, RECENTER_INTERVAL_MILLISECONDS, webmap, view);
         }
 
         async function startUp() {
             await webmap.load();
             setViewFocus();
 
-            const cruise = (await vehiclePositionsLayer.queryFeatures())?.features?.[0]?.attributes?.cruise;
-            shipTracks.definitionExpression = `vehicle = 'Nautilus' AND cruise = '${cruise}'`;
-            shipTracks.refreshInterval = 5; // Refresh every 5 minutes 
-            console.log(`Cruise: ${cruise}`);
-
             if (showShipTrack) {
-              await shipTracks.load();
-              webmap.add(shipTracks);            
+              // Drupal block setting showShipTrack is switched on.    
             }
+
         }
 
         async function setViewFocus() {
-            await centerOnShip(webmap, view);
+            await centerOnShip();
 
             await reactiveUtils.whenOnce(() => view.interacting || view.zoom != DEFAULT_ZOOM);
             userHasInteracted = true;
@@ -92,7 +72,7 @@ import * as reactiveUtils from "@arcgis/core/core/reactiveUtils.js";
         }
 
         startUp();
-        
+
     }
   };
 })(jQuery, Drupal);
