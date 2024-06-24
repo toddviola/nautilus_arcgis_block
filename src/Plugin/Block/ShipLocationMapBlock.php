@@ -59,7 +59,7 @@ final class ShipLocationMapBlock extends BlockBase {
     }
 
     $build['content'] = [
-      '#markup' => '<div id="ship-location-map" class="arcgis-map"></div>',
+      '#markup' => '<div id="ship-location-map-container" class="arcgis-map"></div>',
     ];
     return $build;
   }
