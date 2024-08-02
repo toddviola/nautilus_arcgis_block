@@ -1,12 +1,14 @@
 const path = require('path');
 
-const HtmlWebPackPlugin = require('html-webpack-plugin');
+//const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
   entry: {
-    index: ['./assets/arcgis-map.css', './assets/ship-location.js']
+    common: ['./assets/arcgis-map.css'],
+    ship_location: ['./assets/ship-location.js'],
+    cruise_data: ['./assets/cruise-data.js'],
   },
   node: false,
   optimization: {
@@ -37,13 +39,13 @@ module.exports = {
     ]
   },
   plugins: [
-    new HtmlWebPackPlugin({
-      title: 'Nautilus Live ArcGIS Map Test',
-      template: './assets/index.html',
-      filename: './index.html',
-      chunksSortMode: 'none',
-      inlineSource: '.(css)$'
-    }),
+    // new HtmlWebPackPlugin({
+    //   title: 'Nautilus Live ArcGIS Map Test',
+    //   template: './assets/index.html',
+    //   filename: './index.html',
+    //   chunksSortMode: 'none',
+    //   inlineSource: '.(css)$'
+    // }),
     new MiniCssExtractPlugin({
       filename: "[name].css",
       chunkFilename: "[id].css"

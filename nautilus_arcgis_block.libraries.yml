@@ -3,12 +3,22 @@ common:
   css:
     theme:
       '//js.arcgis.com/4.29/esri/themes/light/main.css': {type: external, minified: true}
-      'dist/index.css': {}
+      'dist/common.css': {}
 
 # Script to render a specific map
 ship-location:
   js:
-    'dist/index.js': {preprocess: false}
+    'dist/ship_location.js': {preprocess: false}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/drupalSettings
+    - nautilus_arcgis_block/common
+
+# Script to render a specific map
+cruise-data:
+  js:
+    'dist/cruise_data.js': {preprocess: false}
   dependencies:
     - core/drupal
     - core/jquery

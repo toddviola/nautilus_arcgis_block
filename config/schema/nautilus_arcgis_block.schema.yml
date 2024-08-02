@@ -1,0 +1,7 @@
+block.settings.nautilus_arcgis_block_cruise_data_map:
+  type: block_settings
+  label: 'Cruise data map block'
+  mapping:
+    example:
+      type: string
+      label: Example

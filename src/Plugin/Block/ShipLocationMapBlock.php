@@ -4,6 +4,7 @@ namespace Drupal\nautilus_arcgis_block\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Provides a ship location map block.
@@ -44,6 +45,10 @@ final class ShipLocationMapBlock extends BlockBase {
   public function build(): array {
 
     $show_ship_track = $this->configuration['show_ship_track'];
+    $nautilus_live_settings = \Drupal::config('nautilus_config.settings');
+    $current_expedition_tid = $nautilus_live_settings->get('current_expedition');
+    $term = Term::load($current_expedition_tid);
+    $current_expedition_name = $term->getName();
 
     $build['#attached'] = [
       'library' => [
@@ -51,6 +56,7 @@ final class ShipLocationMapBlock extends BlockBase {
       ],
       'drupalSettings' => [
         'showShipTrack' => false,
+        'cruiseName' => $current_expedition_name,
       ]
     ];
 

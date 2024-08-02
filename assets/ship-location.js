@@ -21,6 +21,8 @@ import * as reactiveUtils from "@arcgis/core/core/reactiveUtils.js";
       const SHIP_TRACKS_PORTAL_ITEM_ID = '91fdc3cc7cb646ddac85367fc38eee7d';
       const SHOW_SHIP_TRACK = settings['showShipTrack']; // setting from Drupal block;
 
+      console.log(settings['cruiseName'] + ' from website setting'); // Current cruise from Nautilus Live website settings.
+
       let recenterTimeout;
       let userHasInteracted;
       let view;
@@ -103,6 +105,7 @@ import * as reactiveUtils from "@arcgis/core/core/reactiveUtils.js";
       }
 
       async function startUp() {
+
           webmap = new WebMap({
               // portalItem: {
                   //     id: '2d78b7a7b70847788ad9af95bf6e4ba0',
